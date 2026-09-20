@@ -37,7 +37,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
 models = {"Naives Bayes": Pipeline([("tfidf", TfidfVectorizer()), ("classifier", MultinomialNB())]),
          "Logistic regression": Pipeline([("tfidf", TfidfVectorizer()), ("classifier", LogisticRegression(
              max_iter = 1000, class_weight = "balanced"
-         ))])}
+         ))]),
+          "Logistic regression + word pairs": Pipeline([("tfidf", TfidfVectorizer(ngram_range = (1, 2))), ("classifier", LogisticRegression
+          (max_iter = 1000, class_weight = "balanced"))])}
 scoring = {
     "precision": make_scorer(precision_score, pos_label = "spam", zero_division = 0),
     "recall": make_scorer(recall_score, pos_label="spam", zero_division = 0),
@@ -50,7 +52,7 @@ for name, candidate in models.items():
     print(f"Spam precision: {scores['test_precision'].mean():.3f}")
     print(f"Spam recall:    {scores['test_recall'].mean():.3f}")
     print(f"Spam F1:        {scores['test_f1'].mean():.3f}")
-model = models["Logistic regression"]
+model = models["Logistic regression + word pairs"]
 model.fit(x_train, y_train)
 
 #Evaluation of the model
