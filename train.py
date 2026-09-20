@@ -6,6 +6,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix
 import joblib
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold, cross_validate
+from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score
 
 # Load the data and organize the data in a pandas dataframe
 BASE_DIR = Path(__file__).resolve().parent
@@ -31,7 +34,23 @@ x_train, x_test, y_train, y_test = train_test_split(x, y,
                                                     stratify = y,)
 
 #Training the model
-model = Pipeline([("tfidf", TfidfVectorizer()), ("classifier", MultinomialNB())])
+models = {"Naives Bayes": Pipeline([("tfidf", TfidfVectorizer()), ("classifier", MultinomialNB())]),
+         "Logistic regression": Pipeline([("tfidf", TfidfVectorizer()), ("classifier", LogisticRegression(
+             max_iter = 1000, class_weight = "balanced"
+         ))])}
+scoring = {
+    "precision": make_scorer(precision_score, pos_label = "spam", zero_division = 0),
+    "recall": make_scorer(recall_score, pos_label="spam", zero_division = 0),
+    "f1": make_scorer(f1_score, pos_label = "spam", zero_division = 0),
+}
+folds = StratifiedKFold(n_splits = 5, shuffle = True, random_state = 42)
+for name, candidate in models.items():
+    scores = cross_validate(candidate, x_train, y_train, cv = folds, scoring = scoring)
+    print(f"\n{name}")
+    print(f"Spam precision: {scores['test_precision'].mean():.3f}")
+    print(f"Spam recall:    {scores['test_recall'].mean():.3f}")
+    print(f"Spam F1:        {scores['test_f1'].mean():.3f}")
+model = models["Logistic regression"]
 model.fit(x_train, y_train)
 
 #Evaluation of the model
