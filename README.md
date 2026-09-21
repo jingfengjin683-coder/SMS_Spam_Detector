@@ -32,3 +32,7 @@ For each recognized feature, its contributions is calculated as:
 TF-IDF value * learned logistic-regression weight. Positive contributions
 push toward spam negative contributions push toward ham. The final score includes
 akk contributions plus the model's learned starting offset.
+
+I have added 11 examples message to test the model. The script prints all messages, a
+prediction summary and the incorrect predictions. These familiar examples help track
+changes in behaviour of our model.
