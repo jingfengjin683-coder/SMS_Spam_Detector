@@ -1,38 +1,225 @@
 SMS Spam Detector
-is a machine learning project that classfies SMS messages as spam or ham
-with a simple Streamlit interface. This project uses the UCI SMS Spam Collection. It
-also evaluate predictions with precision, recall. F1-score and a confussion matrix. Logistic
-regression overall have a better performance compare to Naive Bayes. I have
-add the influence of word pairs to the model and there is an increase in precision, recall, F1-score.
 
-Result:
-Naives Bayes
-Spam precision: 1.000
-Spam recall:    0.603
-Spam F1:        0.751
+A machine-learning project that classifies SMS messages as spam or ham (legitimate messages), using a simple Streamlit interface.
+
+I built this project to learn text classification, model evaluation, prediction explanations, and Git.
+
+Features
+
+Classify a message as spam or not spam.
+
+Compare Naive Bayes and logistic regression.
+
+Use individual words and word pairs as text features.
+
+Display the features that influence each prediction.
+
+Automatically evaluate 11 example messages.
+
+How It Works
+
+The project uses the UCI SMS Spam Collection.
+
+The training script removes incomplete rows and duplicate messages, then separates the data into training and test sets.
+
+A TF-IDF vectorizer converts text into numerical features. The current classifier is logistic regression with balanced class weights and both individual-word and word-pair features.
+
+Models are compared using five-fold stratified cross-validation on the training data. The selected model is then trained, evaluated on the held-out test set, and saved for the app.
+
+Results
+
+Cross-Validation Results
+
+The following are average spam-class scores across five validation folds, not overall accuracy:
+
+Model
+
+Precision
+
+Recall
+
+F1-score
+
+Naive Bayes
+
+1.000
+
+0.603
+
+0.751
 
 Logistic regression
-Spam precision: 0.900
-Spam recall:    0.931
-Spam F1:        0.915
+
+0.900
+
+0.931
+
+0.915
 
 Logistic regression + word pairs
-Spam precision: 0.919
-Spam recall:    0.939
-Spam F1:        0.929
 
-Confusion matrix:
-Predicted ham actually ham 892,
-predicted spam actually ham 12,
-predicted spam actually ham 12,
-predicted spam actually spam 119
+0.919
 
-The app display the word and pairs that influence each prediction.
-For each recognized feature, its contributions is calculated as: 
-TF-IDF value * learned logistic-regression weight. Positive contributions
-push toward spam negative contributions push toward ham. The final score includes
-akk contributions plus the model's learned starting offset.
+0.939
 
-I have added 11 examples message to test the model. The script prints all messages, a
-prediction summary and the incorrect predictions. These familiar examples help track
-changes in behaviour of our model.
+0.929
+
+Adding word pairs improved all three cross-validation metrics.
+
+Final Model: Held-Out Test Results
+
+The test set contains 1,035 messages.
+
+Metric
+
+Result
+
+Overall accuracy
+
+97.7%
+
+Spam precision
+
+90.8%
+
+Spam recall
+
+90.8%
+
+Spam F1-score
+
+90.8%
+
+Confusion Matrix
+
+
+
+Predicted ham
+
+Predicted spam
+
+Actual ham
+
+892
+
+12
+
+Actual spam
+
+12
+
+119
+
+The model correctly classified 1,011 messages. It missed 12 spam messages and incorrectly flagged 12 legitimate messages.
+
+Compared with logistic regression using individual words alone, word pairs reduced false alarms from 14 to 12, but increased missed spam from 11 to 12.
+
+Prediction Explanations
+
+The app displays words and word pairs that influence each prediction.
+
+Each feature’s contribution is calculated as:
+
+Contribution = TF-IDF value × learned logistic-regression weight
+
+Positive contributions push toward spam.
+
+Negative contributions push toward ham.
+
+The final score combines all contributions with the model’s learned starting offset. These scores are not percentages.
+
+The explanation helps investigate mistakes; it does not prove that a message is safe or improve predictions by itself.
+
+Example Evaluation and Limitations
+
+The evaluate_examples.py script checks 11 manually written development examples. It prints:
+
+All messages.
+
+Expected and predicted labels.
+
+A summary of incorrect predictions.
+
+The current model correctly classifies 7 of 11 examples: 3 of 4 spam messages and 4 of 7 legitimate messages.
+
+Remaining mistakes include a missed fake delivery-fee message and false alarms on a study reminder, a school competition message, and a warning about a scam.
+
+These familiar examples help track changes in behaviour. They are not an independent measure of overall accuracy.
+
+The model learns word associations and can struggle with unfamiliar wording and context. Performance on the UCI test set does not guarantee the same performance on newer messages.
+
+Run Locally
+
+Developed with Python 3.14 on Windows. The following commands use PowerShell.
+
+1. Download the project
+
+Clone the repository:
+
+git clone https://github.com/jingfengjin683-coder/SMS_Spam_Detector.git
+cd SMS_Spam_Detector
+
+Alternatively, download and extract the repository ZIP, then open a terminal in the extracted project folder.
+
+2. Create an environment and install dependencies
+
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+3. Download the dataset
+
+Download and extract the dataset from the UCI page linked above.
+
+Create a data folder in the project and place the extracted files inside it:
+
+data/
+├── SMSSpamCollection
+└── readme
+
+Keep SMSSpamCollection without a file extension. Refer to the dataset page and accompanying readme for attribution and usage information.
+
+4. Train the model
+
+.\.venv\Scripts\python.exe train.py
+
+This prints evaluation results and creates spam_model.joblib.
+
+5. Start the app
+
+.\.venv\Scripts\python.exe -m streamlit run app.py
+
+Open the local URL printed in the terminal. Press Ctrl+C to stop the app.
+
+Restart the app after retraining so it loads the updated model.
+
+6. Run the example check
+
+.\.venv\Scripts\python.exe evaluate_examples.py
+
+Project Structure
+
+SMS_Spam_Detector/
+├── app.py
+├── train.py
+├── evaluate_examples.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── data/                 # Downloaded separately
+└── spam_model.joblib     # Generated by training
+
+The dataset, trained model, and virtual environment are excluded from Git. They must be set up locally.
+
+What I Learned
+
+Preparing text data with pandas and TF-IDF.
+
+Comparing models using cross-validation.
+
+Understanding precision, recall, and false alarms.
+
+Investigating predictions using feature contributions.
+
+Building a Streamlit interface.
+
+Using Git branches, commits, and pull requests.
