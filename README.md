@@ -25,4 +25,10 @@ Confusion matrix:
 Predicted ham actually ham 892,
 predicted spam actually ham 12,
 predicted spam actually ham 12,
-predicted spam actually spam 119,
+predicted spam actually spam 119
+
+The app display the word and pairs that influence each prediction.
+For each recognized feature, its contributions is calculated as: 
+TF-IDF value * learned logistic-regression weight. Positive contributions
+push toward spam negative contributions push toward ham. The final score includes
+akk contributions plus the model's learned starting offset.
