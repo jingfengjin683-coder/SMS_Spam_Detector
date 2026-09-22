@@ -178,23 +178,27 @@ data/
 
 Keep SMSSpamCollection without a file extension. Refer to the dataset page and accompanying readme for attribution and usage information.
 
-4. Train the model
+### 4. Train the model
 
+```powershell
 .\.venv\Scripts\python.exe train.py
+```
 
-This prints evaluation results and creates spam_model.joblib.
+This prints evaluation results and creates `spam_model.joblib`.
 
-5. Start the app
+### 5. Start the app
 
+```powershell
 .\.venv\Scripts\python.exe -m streamlit run app.py
+```
 
 Open the local URL printed in the terminal. Press Ctrl+C to stop the app.
 
-Restart the app after retraining so it loads the updated model.
+### 6. Run the example check
 
-6. Run the example check
-
+```powershell
 .\.venv\Scripts\python.exe evaluate_examples.py
+```
 
 Project Structure
 
